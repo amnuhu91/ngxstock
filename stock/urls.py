@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path,include
 from django.views.generic import TemplateView
 from prediction.views import make_prediction
+from django.conf import settings 
+from django.conf.urls.static import static 
 
 
 urlpatterns = [
@@ -25,4 +27,4 @@ urlpatterns = [
     path('predict/', make_prediction,name="prediction"),
     
     
-]
+]+ + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
