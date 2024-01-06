@@ -1,0 +1,43 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block content %}
+{% bootstrap_messages %}
+<div class="pcoded-main-container" >
+  <div class="pcoded-content m-2">
+    <h1>Add Department/Unit</h1>
+
+    
+    <div class="container " >
+      <div class="card text-white bg-info mb-3 p-2" style="max-width: 25rem; font-weight: bold; font-size: large;">
+        <div class="card-header">Welcome !!!</div>
+        <div class="card-body">
+          <h5 class="card-title" style="font-style: oblique; font-weight: bolder;">{{member.first_name}}  {{member.last_name}}</h5>
+          
+        </div>
+      </div>
+    </div>
+    {% if msg %}
+    {% bootstrap_alert msg alert_type=msg_c %}
+    {% endif %}
+    
+      <form method="POST" id="user-register" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form  %}
+       
+        
+      <div class="row">
+        <div class="col-lg-6">
+          {% bootstrap_button button_class='btn-success' button_type="submit" content="Add" size='sm' id='subbtn' %}
+          
+        </div>
+        
+      </div>
+      </form>
+    
+  </div>
+</div>
+{% endblock content %}

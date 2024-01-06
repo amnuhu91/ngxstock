@@ -1,0 +1,1404 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load django_template_maths %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load humanize %} 
+{% block content %}
+{% bootstrap_messages %}
+<div class="pcoded-main-container" >
+  <div class="pcoded-content m-2">
+    <p class="text-secondary fw-bolder">Welcome {{request.user.get_full_name}}{% if not has_fill == True  %} <small class=""><a href="{% url 'user:work-history' %}">Pls Update info</a></small>{% else %}{% endif %}
+      <small class="fst-italic fst-6 text-muted text-info"><a href="{% url 'change_password' %}">Change password </a></small>
+    </p>
+    {% if request.user.is_superuser %}
+    <hr>
+      <p class="text-center text-danger text-decoration-underline fw-bolder fs-3">Cooperative information for management</p>
+    <hr>
+    <div class="container">
+      <p class="text-primary text-center fw-bolder text-decoration-underline fw-bolder fs-3">Savings information</p>
+
+          <div class="row">
+            <div class="col-lg-7">
+              <div class="row">
+               <div class="col-lg-12">
+                 <div class="row">
+                   <div class="col-lg-6">
+                    {% if current_month_total_saving is not None %}
+                    
+                      <div class="card">
+                        <div class="card-header text-success fw-bold">
+                          Total saving fo {% now "M/Y" %} 
+                        </div>
+                        <div class="card-body">
+                          N{{current_month_total_saving|intcomma}}
+                        </div>
+                      
+                    </div>
+                    {% endif %}
+                   </div>
+                   <div class="col-lg-6">
+                    <!--financial year-->
+                    {% if financial_year_saving is not None %}
+                    
+                      <div class="card">
+                        <div class="card-header text-info fw-bold">
+                          Total saving for  {% now "Y" %} Financial year. 
+                        </div>
+                        <div class="card-body">
+                          N{{financial_year_saving|intcomma}}
+                        </div>
+                      
+                    </div>
+                    {% endif %}
+                    <!--financial year-->
+                   </div>
+                 </div>
+               </div>
+               <div class="col-lg-12 mt-5 align-items-end">
+                  <div class="row align-items-end">
+                    <div class="col-lg-12">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <!--total saving-->
+                          {% if years_saving_tt.last_year is not None %}
+                            
+                          <div class="card">
+                            <div class="card-header text-warning fw-bold">
+                              Last year saving. 
+                            </div>
+                            <div class="card-body">
+                              N{{years_saving_tt.last_year|intcomma}}
+                            </div>
+                          
+                        </div>
+                        {% endif %}
+                        <!--total saving-->
+                        </div>
+                        <div class="col-lg-6">
+                            <!--total saving-->
+                            {% if years_saving_tt.this_year is not None %}
+                            
+                            <div class="card">
+                              <div class="card-header text-primary fw-bold">
+                                Current year saving. 
+                              </div>
+                              <div class="card-body">
+                                N{{years_saving_tt.this_year|intcomma}}
+                              </div>
+                            
+                          </div>
+                          {% endif %}
+                          <!--total saving-->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+              </div> 
+             </div>
+             <div class="col-lg-5"  >
+               <!--saving chart-->
+                {% if saving_chart is not None %}
+                
+                  <div class="card" >
+                    <div class="card-header text-secondary fw-bold">
+                      Saving info. 
+                    </div>
+                    <div class="card-body">
+                      <canvas id="saving_chart_can" style="max-height: 350px;"></canvas>
+                    </div>
+                  
+                </div>
+                {% endif %}
+                <!--saving chart-->
+             </div>
+             <!--total-->
+             <div class="row">
+              {% if saving_info.loanable != 0 and saving_info.loanable is not Noe %}
+              <div class="col-lg-3">
+                <div class="card bg-transparent" >
+                  <div class="card-header text-secondary fw-bold">
+                    Month Loanable saving
+                  </div>
+                  <div class="card-body">
+                    
+                      N{{saving_info.loanable|intcomma}}
+                    
+                  </div>
+                
+                </div>
+              </div>
+              {% endif %}
+              <div class="col-lg-3">
+                {% if saving_info.cumloanable != 0 and saving_info.cumloanable is not None %}
+                <div class="card bg-dark" >
+                  <div class="card-header text-white fw-bold">
+                    Cumm. Loanable saving
+                  </div>
+                  <div class="card-body text-white">
+                    
+                      N{{saving_info.cumloanable|intcomma}}
+                    
+                  </div>
+                
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-lg-3">
+                {% if saving_info.investment != 0 and saving_info.investment is not None %}
+                <div class="card bg-info" >
+                  <div class="card-header text-white fw-bold">
+                    Month investment saving
+                  </div>
+                  <div class="card-body text-white">
+                    
+                      N{{saving_info.investment|intcomma}}
+                    
+                  </div>
+                
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-lg-3">
+                {% if saving_info.cuminvest != 0 and saving_info.cuminvest is not None %}
+                <div class="card bg-dark" >
+                  <div class="card-header text-white fw-bold">
+                    Cumm. investment saving
+                  </div>
+                  <div class="card-body text-white">
+                    
+                      N{{saving_info.cuminvest|intcomma}}
+                    
+                  </div>
+                
+                </div>
+                {% endif %}
+              </div>
+              
+              <div class="col-lg-3">
+                <div class="card bg-success" >
+                  <div class="card-header text-secondary fw-bold">
+                    Total Saving 
+                  </div>
+                  <div class="card-body">
+                    
+                      N{{total_saving_coop|intcomma}}
+                    
+                  </div>
+                
+                </div>
+              </div>
+              <div class="col-lg-3">
+                {% if saving_info.share != 0 and saving_info.share is not None %}
+                <div class="card bg-primary" >
+                  <div class="card-header  fw-bold">
+                    Month share 
+                  </div>
+                  <div class="card-body">
+                    
+                      {{ saving_info.share|floatformat:2}}
+                    
+                  </div>
+                
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-lg-3">
+                {% if saving_info.cumshare != 0 and saving_info.cumshare is not None %}
+                <div class="card bg-transparent" >
+                  <div class="card-header  fw-bold">
+                    Cummulative share 
+                  </div>
+                  <div class="card-body">
+                    
+                      {{ saving_info.cumshare|floatformat:2}}
+                    
+                  </div>
+                
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-lg-3">
+                {% if new_members %}
+
+                <div class="card bg-danger" >
+                  <div class="card-header  fw-bold">
+                    Membership form
+                  </div>
+                  <div class="card-body">
+                    <p class="text-white">New members:{{new_members.new_month}}</p>
+                    <p class="text-white">Income:{{new_members.income}}</p>
+                  </div>
+                
+                </div>
+                {% endif %}
+              </div>
+             </div>
+          <!--total-->
+          </div>
+    </div>
+
+    <!--Disbursement information-->
+    <div class="container">
+      <p class="text-danger text-center fw-bolder text-decoration-underline fw-bolder fs-3">Disbursement information</p>
+      <div class="row">
+        <div class="col-lg-6 border-end border-2 border-danger">
+          <p class="text-info fw-semibold fst-italic text-start text-decoration-underline ">Short term loans disbursement</p>
+          <div class="pt-1">
+            {% if disbursement.short %}
+            <table class="table table-dark table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">Batch</th>
+                  <th scope="col">Beneficiaries</th>
+                  <th scope="col">Total amount</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{disbursement.short.recent.date|date:"F/Y"}}</td>
+                  <td>{{disbursement.short.recent.beneficiaries}}</td>
+                  <td>{{disbursement.short.recent.amount|floatformat:2}}</td>
+                </tr>
+                <tr>
+                  <td>{{disbursement.short.secon_last_short.date|date:"F/Y"}}</td>
+                  <td>{{disbursement.short.secon_last_short.beneficiaries}}</td>
+                  <td>{{disbursement.short.secon_last_short.amount|floatformat:2}}</td>
+                </tr>
+                <tr>
+                  <td>{{disbursement.short.third_last_short.date|date:"F/Y"}}</td>
+                  <td>{{disbursement.short.third_last_short.beneficiaries}}</td>
+                  <td>{{disbursement.short.third_last_short.amount|floatformat:2}}</td>
+                </tr>
+                
+              </tbody>
+            </table>
+            {% endif %}
+          </div>
+        </div>
+        
+        <div class="col-lg-6">
+          <p class="text-success fw-semibold fst-italic text-end text-decoration-underline ">Long term loans disbursement</p>
+          <div class="pt-1">
+            {% if disbursement.long %}
+            <table class="table table-dark table-striped table-bordered  ">
+              <thead>
+                <tr>
+                  <th scope="col">Batch</th>
+                  <th scope="col">Beneficiaries</th>
+                  <th scope="col">Total amount</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{disbursement.long.recent.date|date:"F/Y"}}</td>
+                  <td>{{disbursement.long.recent.beneficiaries}}</td>
+                  <td>{{disbursement.long.recent.amount|floatformat:2}}</td>
+                </tr>
+                <tr>
+                  <td>{{disbursement.long.secon_last_long.date|date:"F/Y"}}</td>
+                  <td>{{disbursement.long.secon_last_long.beneficiaries}}</td>
+                  <td>{{disbursement.long.secon_last_long.amount|floatformat:2}}</td>
+                </tr>
+                <tr>
+                  <td>{{disbursement.long.third_last_long.date|date:"F/Y"}}</td>
+                  <td>{{disbursement.long.third_last_long.beneficiaries}}</td>
+                  <td>{{disbursement.long.third_last_long.amount|floatformat:2}}</td> 
+                </tr>
+                
+              </tbody>
+            </table>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--Disbursement information-->
+
+
+    <!--short term-->
+    <div class="container">
+      <p class="text-primary text-center fw-bolder text-decoration-underline fw-bolder fs-3">Short term loan information</p>
+
+          <div class="row">
+            <div class="col-lg-7">
+              <div class="row">
+               <div class="col-lg-12">
+                <div class="row">
+                  
+                    <div class="col-lg-4">
+                      {% if short_term_info.recent_date  %}
+                      <div class="card bg-dark">
+                        <ul class="list-group list-group-flush bg-transparent">
+                          <li class="list-group-item">Batch:{{short_term_info.recent_date|date:"F/Y"}}</li>
+                          <li class="list-group-item">Forms applied:{{short_term_info.recent_short_form_solds}}</li>
+                          <li class="list-group-item">Give out forms:{{short_term_info.recent_short_form_solds}} ||{{short_term_info.amount_made_from_r_gave}}</li>
+                          <li class="list-group-item">Amount made:N{{short_term_info.amount_made_from_r}}</li>
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <div class="col-lg-4 ">
+                      {% if short_term_info.second_l_date  %}
+                      <div class="card border border-success border-3">
+                        <ul class="list-group list-group-flush ">
+                          <li class="list-group-item">Batch:{{short_term_info.second_l_date|date:"F/Y"}}</li>
+                          <li class="list-group-item">Forms applied:{{short_term_info.second_l_form_solds}}</li>
+                          <li class="list-group-item">Give out forms:{{short_term_info.second_l_form_gave}} ||{{short_term_info.amount_second_l_gave}}</li>
+                          <li class="list-group-item">Amount made:N{{short_term_info.amount_second_l}}</li>
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <div class="col-lg-4">
+                      {% if short_term_info.second_l_date  %}
+                      <div class="card border border-primary border-3">
+                        <ul class="list-group list-group-flush ">
+                          <li class="list-group-item">Batch:{{short_term_info.thirt_date|date:"F/Y"}}</li>
+                          <li class="list-group-item">Forms applied:{{short_term_info.third_last}}</li>
+                          <li class="list-group-item">Give out forms:{{short_term_info.third_gave}} ||{{short_term_info.amount_third_l_gave}}</li>
+                          <li class="list-group-item">Amount made:N{{short_term_info.amount_third_l}}</li>
+                        </ul>
+                      </div>
+                      {% endif %}
+                    </div>
+                    <!-- <p class="text-center fw-bolder">income</p> -->
+                </div>
+                 <div class="row">
+                   <div class="col-lg-6">
+                    {% if current_month_short_d is not None %}
+                    
+                      <div class="card">
+                        <div class="card-header text-success fw-bold">
+                          Short term deduction for {{recent_loan_date|date:"F/Y"}}
+                        </div>
+                        <div class="card-body">
+                          <p class="card-text"> Amount credited:N{{current_month_short_d|intcomma}}</p>
+                          <p class="card-text">Amount Expected:N{{short_term_info.short_deduction_expected|floatformat:2|intcomma}}</p>
+                        </div>
+                      
+                    </div>
+                    {% endif %}
+                   </div>
+                   <div class="col-lg-6">
+                    <!--financial year-->
+                    {% if financial_year_short_d is not None %}
+                    
+                      <div class="card">
+                        <div class="card-header text-info fw-bold">
+                          Total short term deduction for  {% now "Y" %} Financial year. 
+                        </div>
+                        <div class="card-body">
+                          N{{financial_year_short_d|intcomma}}
+                        </div>
+                      
+                    </div>
+                    {% endif %}
+                    <!--financial year-->
+                   </div>
+                 </div>
+               </div>
+               <div class="col-lg-12 mt-1 align-items-end">
+                  <div class="row align-items-end">
+                    <div class="col-lg-12">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <!--total saving-->
+                          {% if years_short.last_ys is not None %}
+                            
+                          <div class="card">
+                            <div class="card-header text-warning fw-bold">
+                              Total short term deduction for last year. 
+                            </div>
+                            <div class="card-body">
+                              N{{years_short.last_ys|intcomma}}
+                            </div>
+                          
+                        </div>
+                        {% endif %}
+                        <!--total saving-->
+                        </div>
+                        <div class="col-lg-6">
+                            <!--total saving-->
+                            {% if years_short.this_ys is not None %}
+                            
+                            <div class="card">
+                              <div class="card-header text-primary fw-bold">
+                               Total short term for  Current year. 
+                              </div>
+                              <div class="card-body">
+                                N{{years_short.this_ys|intcomma}}
+                              </div>
+                            
+                          </div>
+                          {% endif %}
+                          <!--total saving-->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+              </div> 
+             </div>
+             <div class="col-lg-5"  >
+               <!--saving chart-->
+                {% if saving_chart is not None %}
+                
+                  <div class="card" >
+                    <div class="card-header text-secondary fw-bold">
+                      Short term info. 
+                    </div>
+                    <div class="card-body">
+                      <canvas id="short_chart_canvas" style="max-height: 350px;"></canvas>
+                    </div>
+                  
+                </div>
+                {% endif %}
+                <!--saving chart-->
+             </div>
+             <!--total short-->
+              <div class="row">
+                <div class="col-lg-3">
+                  <div class="card bg-warning" >
+                    <div class="card-header text-secondary fw-bold">
+                      Short term deduction
+                    </div>
+                    <div class="card-body">
+                      
+                        N{{total_short_d|intcomma}}
+                      
+                    </div>
+                  
+                </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="card bg-info" >
+                    <div class="card-header text-secondary fw-bold">
+                      Short term Payoff
+                    </div>
+                    <div class="card-body">
+                      
+                        N{{total_short_offset|intcomma}}
+                      
+                    </div>
+                  
+                </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="card bg-danger" >
+                    <div class="card-header text-white fw-bold">
+                      Month short term refund
+                    </div>
+                    <div class="card-body text-white">
+                      
+                        N{{short_term_info.refund|intcomma}}
+                      
+                    </div>
+                  
+                </div>
+                </div>
+                <div class="col-lg-3">
+                  <small></small>
+                  <table class="table table-dark table-bordered table-striped">
+                    <tbody>
+                      <tr>
+                        <td>Total short paid:N{{total_short_paid|floatformat:2}}</td>
+                      </tr>
+                      <tr>
+                        <td>Total short for Coop.N{{short_d_balance|floatformat:2}}</td>
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+                </div>
+                
+              </div>
+          <!--total-->
+
+          <!--check short-->
+          <div class="row">
+            <!-- <p class="text-center text-dark">check short</p> -->
+            <div class="col-lg-3">
+              <table class="table table-success table-bordered table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total short amount Disbursed.N{{disbursement.short.total_short_disbursed|floatformat:2|intcomma}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-lg-3">
+              <table class="table table-primary table-bordered table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total short amount recovered.N{{short_d_balance|floatformat:2}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-lg-3">
+              <table class="table table-secondary table-dark table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total short balance remain.N{{disbursement.short.total_short_disbursed|sub:short_d_balance}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--check short-->
+          </div>
+    </div>
+    <!--short term-->
+
+    <!--long term -->
+    <div class="container">
+      <p class="text-success text-center fw-bolder text-decoration-underline fw-bolder fs-3">Long term loan information</p>
+
+          <div class="row">
+            <div class="col-lg-7">
+              <!--long loan info-->
+              <div class="row">
+                  
+                <div class="col-lg-4">
+                  {% if long_term_info.recent_date  %}
+                  <div class="card border-danger border-right">
+                    <ul class="list-group list-group-flush bg-transparent">
+                      <li class="list-group-item">Batch:{{long_term_info.recent_date|date:"F/Y"}}</li>
+                      <li class="list-group-item">Forms applied:{{long_term_info.recent_long_form_solds}}</li>
+                      <li class="list-group-item">Give out forms:{{long_term_info.recent_long_form_gave}} ||{{long_term_info.recent_gave}}</li>
+                      <li class="list-group-item">Amount made:N{{long_term_info.recent_amount}}</li>
+                    </ul>
+                  </div>
+                  {% else %}
+                  <small>no advert</small>
+                  {% endif %}
+                </div>
+                <div class="col-lg-4 ">
+                  {% if long_term_info.second_date  %}
+                  <div class="card border border-success border-1">
+                    <ul class="list-group list-group-flush ">
+                      <li class="list-group-item">Batch:{{long_term_info.second_date|date:"F/Y"}}</li>
+                      <li class="list-group-item">Forms applied:{{long_term_info.second_l_form_solds}}</li>
+                      <li class="list-group-item">Give out forms:{{long_term_info.second_l_form_gave_long}} ||{{long_term_info.second_amount_gave_long}}</li>
+                      <li class="list-group-item">Amount made:N{{long_term_info.second_amount}}</li>
+                    </ul>
+                  </div>
+                  {% else %}
+                  <small>no advert</small>
+                  {% endif %}
+                </div>
+                <div class="col-lg-4">
+                  {% if long_term_info.third_date  %}
+                  <div class="card border border-primary border-3">
+                    <ul class="list-group list-group-flush ">
+                      <li class="list-group-item">Batch:{{long_term_info.third_date|date:"F/Y"}}</li>
+                      <li class="list-group-item">Forms applied:{{long_term_info.third_l_forms_solds}}</li>
+                      <li class="list-group-item">Give out forms:{{long_term_info.third_l_forms_gave}} ||{{long_term_info.third_amount_gave}}</li>
+                      <li class="list-group-item">Amount made:N{{long_term_info.third_amount}}</li>
+                    </ul>
+                  </div>
+                  {% else %}
+                  <p>no third long term loan</p>
+                  {% endif %}
+                </div>
+                <!-- <p class="text-center fw-bolder">income</p> -->
+            </div>
+              <!--long loan info-->
+              <div class="row">
+               <div class="col-lg-12">
+                 <div class="row">
+                   <div class="col-lg-6">
+                    {% if current_month_long_d is not None  %}
+                    
+                      <div class="card">
+                        <div class="card-header text-danger fw-bold">
+                          Long term deduction for {{recent_long_date|date:"F/Y"}}
+                        </div>
+                        
+                          
+                          <div class="card-body">
+                            <p class="card-text"> Amount credited:N{{current_month_long_d|intcomma}}</p>
+                            <p class="card-text">Amount Expected:N{{long_term_info.long_deduction_expected|floatformat:2|intcomma}}</p>
+                          
+                        </div>
+                      
+                    </div>
+                    {% endif %}
+                   </div>
+                   <div class="col-lg-6">
+                    <!--financial year-->
+                    {% if financial_year_long_d is not None %}
+                    
+                      <div class="card">
+                        <div class="card-header text-warning fw-bold">
+                          Total Long term deduction for  {% now "Y" %} Financial year. 
+                        </div>
+                        <div class="card-body">
+                          N{{financial_year_long_d|intcomma}}
+                        </div>
+                      
+                    </div>
+                    {% endif %}
+                    <!--financial year-->
+                   </div>
+                 </div>
+               </div>
+               <div class="col-lg-12 mt-5 align-items-end">
+                  <div class="row align-items-end">
+                    <div class="col-lg-12">
+                      <div class="row">
+                        <div class="col-lg-6">
+                          <!--total saving-->
+                          {% if years_long.last_ys is not None %}
+                            
+                          <div class="card">
+                            <div class="card-header text-success fw-bold">
+                              Total Long term deduction for last year. 
+                            </div>
+                            <div class="card-body">
+                              N{{years_long.last_ys|intcomma}}
+                            </div>
+                          
+                        </div>
+                        {% else %}
+                        <small>No deduction for long term given last year</small>
+                        {% endif %}
+                        <!--total saving-->
+                        </div>
+                        <div class="col-lg-6">
+                            <!--total saving-->
+                            {% if years_long.this_ys is not None %}
+                            
+                            <div class="card">
+                              <div class="card-header text-primary fw-bold">
+                               Total long term for  Current year. 
+                              </div>
+                              <div class="card-body">
+                                N{{years_long.this_ys|intcomma}}
+                              </div>
+                            
+                          </div>
+                          {% endif %}
+                          <!--total saving-->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+              </div> 
+             </div>
+             <div class="col-lg-5"  >
+               <!--saving chart-->
+                {% if long_chart is not None %}
+                
+                  <div class="card" >
+                    <div class="card-header text-secondary fw-bold">
+                      Long term info. 
+                    </div>
+                    <div class="card-body">
+                      <canvas id="long_chart_canvas" style="max-height: 350px;"></canvas>
+                    </div>
+                  
+                </div>
+                {% endif %}
+                <!--saving chart-->
+             </div>
+          <!--total long-->
+          <div class="row">
+            <div class="col-lg-3">
+              <div class="card bg-primary" >
+                <div class="card-header text-transparent fw-bold">
+                  Total Long term deduction
+                </div>
+                <div class="card-body">
+                  
+                    N{{total_long_d|intcomma}}
+                  
+                </div>
+              
+            </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="card bg-transparent" >
+                <div class="card-header text-transparent fw-bold">
+                  Total Long term payoff
+                </div>
+                <div class="card-body">
+                  
+                    N{{total_long_offset|intcomma}}
+                  
+                </div>
+              
+            </div>
+            </div>
+            <div class="col-lg-3">
+              <div class="card bg-danger" >
+                <div class="card-header text-transparent fw-bold">
+                  Month long term refund
+                </div>
+                <div class="card-body">
+                  
+                    N{{long_term_info.refund|intcomma}}
+                  
+                </div>
+              
+            </div>
+            </div>
+            <div class="col-lg-3">
+              <table class="table table-primary table-bordered table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total long paid:N{{total_long_paid|floatformat:2}}</td>
+                  </tr>
+                  <tr>
+                    <td>Total Long for Coop.N{{long_d_balance|floatformat:2}}</td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--total-->
+
+          <!--check long term loan-->
+          <div class="row">
+            <!-- <p class="text-center text-dark">check short</p> -->
+            <div class="col-lg-3">
+              <table class="table table-danger table-bordered table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total Long amount Disbursed.N{{disbursement.long.total_long_disbursed|floatformat:2|intcomma}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-lg-3">
+              <table class="table table-warning table-bordered table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total Long amount recovered.N{{long_d_balance|floatformat:2}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="col-lg-3">
+              <table class="table table-secondary table-dark table-striped">
+                <tbody>
+                  <tr>
+                    <td>Total long balance remain.N{{disbursement.long.total_long_disbursed|sub:long_d_balance}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--check long term loan-->
+          </div>
+
+          <!--admin fee-->
+          {% include 'user/admin_fee.html' %}
+          <!--admin fee-->
+
+          <!--profit-->
+          {% include 'user/profit.html' %}
+          <!--profit-->
+    </div>
+    <!--long term -->
+    </div>
+    {% endif %}
+    <br>
+    <hr>
+    <p class="text-center text-danger fw-bolder text-decoration-underline fw-bolder fs-3">Your personal information</p>
+    <div class="container">
+      <div class="row">
+        {% if total_saving %}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Savings | Total savings:N{{total_saving|intcomma}}
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6">
+                  <p class="text-muted">Saving 70%</p>
+                  <div class="row ">
+                    <div class="col-4"><p class=" text-sm-center fw-bold text-success" style="font-size: 11px;">Total:</p></div>
+                    <div class="col-8"><p class="text-muted text-center fw-bold ">N{{saving_70|intcomma}}</p></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <p class="text-muted">Investement 30%</p>
+                  <div class="row">
+                    <div class="col-4"><p class=" text-sm-center fw-bold text-success" style="font-size: 11px;">Inves.</p></div>
+                    <div class="col-8"><p class="text-muted text-sm-center fw-bold">N{{saving_30|intcomma}}</p></div>
+                  </div>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-8"><p class=" text-center fw-bolder text-success">{% now "M/Y" %} profit:</p></div>
+                <div class="col-4"><p class="text-muted text-center fw-bold">N{{monthly_profit|floatformat:2|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class=" text-center fw-bolder text-success">Cummulative profit:</p></div>
+                <div class="col-4"><p class="text-muted text-center fw-bold">N{{total_profit|intcomma|floatformat:2}}</p></div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% if short_term is not None %}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-success fw-bold">
+              Short term loan
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-8"><p class="text-primary text-end fw-bold">Amount Collected:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">N{{short_term.amount_collected|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-primary text-end fw-bold">Date:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">{{short_term.loan_given_month|date:"M/Y"}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-primary text-end fw-bold">Amount paid:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">N{{short_term.amount_paid|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-danger text-end fw-bold">Balance:</p></div>
+                <div class="col-4"><p class="text-danger text-start fw-bold">N{{short_term.balance_remain|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-primary text-end fw-bold">Expected End date:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">{{short_term.payment_for_loan_deduct.end_date|date:"d/M/Y"}}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-success fw-bold">
+              Short term loan
+            </div>
+            <div class="card-body">
+              <p class="text-info fw-bold">You have no short term loan</p>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% if long_term is not None %}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-secondary fw-bold">
+              Long term loan
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-8"><p class="text-info text-end fw-bold">Amount Collected:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">N{{long_term.amount_collected|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-info text-end fw-bold">Date:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">{{long_term.loan_given_month|date:"M/Y"}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-info text-end fw-bold">Amount paid:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">N{{long_term.amount_paid|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-danger text-end fw-bold">Balance:</p></div>
+                <div class="col-4"><p class="text-danger text-start fw-bold">N{{long_term.balance_remain|floatformat:2|intcomma}}</p></div>
+              </div>
+              <div class="row">
+                <div class="col-8"><p class="text-info text-end fw-bold">Expected End date:</p></div>
+                <div class="col-4"><p class="text-muted text-start fw-bold">{{long_term.payment_for_loan_deduct.end_date|date:"d/M/Y"}}</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-secondary fw-bold">
+              Long term loan
+            </div>
+            <div class="card-body">
+             <p class="text-primary fw-bold">You have long term loan currently</p>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <hr>
+          {% if consumebles %}
+          <div class="col-lg-6">
+            <div class="row">
+              <div class="card-header text-primary fw-bold">
+                Total Consumebles:N{{consumebles|floatformat:2|intcomma}}
+              </div>
+                <div class="col-lg-6">
+                  <div class="card">
+                    
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold fst-6">Amount:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">N{{recent_cons_amount|floatformat:2|intcomma}}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold">Date:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">{{recent_cons_info.cons_loan.batch|date:"M/Y"}}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold">Amount paid:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">N{{recent_cons.amount_paid|floatformat:2|intcomma}}{% if recent_cons is not None %}{% else %}0{% endif %}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-danger text-end fw-bold">Balance:</p></div>
+                        <div class="col-5"><p class="text-danger text-start fw-bold">N{{recent_cons.balance_remain|floatformat:2|intcomma}}{% if recent_cons is not None %}{% else %}{{recent_cons_amount|floatformat:2|intcomma}}{% endif %}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold">Exp.End date:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">{{recent_cons_info.end_date|date:"d/M/Y"}}</p></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="card">
+                    {% if last_cons is not None %}
+                    <div class="card-body">
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold fst-6">Amount:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">N{{last_cons_amount|floatformat:2|intcomma}}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold">Date:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">{{last_cons_info.cons_loan.batch|date:"M/Y"}}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold">Amount paid:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">N{{last_cons.amount_paid|floatformat:2|intcomma}}{% if last_cons is not None %}{% else %}0{% endif %}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-danger text-end fw-bold">Balance:</p></div>
+                        <div class="col-5"><p class="text-danger text-start fw-bold">N{{last_cons.balance_remain|floatformat:2|intcomma}}{% if last_cons is not None %}{% else %}{{last_cons_amount|floatformat:2|intcomma}}{% endif %}</p></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-7"><p class="text-primary text-end fw-bold">Exp.End date:</p></div>
+                        <div class="col-5"><p class="text-muted text-start fw-bold">{{last_cons_info.end_date|date:"d/M/Y"}}</p></div>
+                      </div>
+                    </div>
+                    {% else %}
+                    no previous cons
+                    {% endif %}
+                   
+                  </div>
+                </div>  
+            </div>
+          </div>
+          {% else %}
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-header text-warning fw-bold">
+                Consumebles
+              </div>
+              <div class="card-body">
+                <p class="text-secondary fw-bold"> You have Consumebles loan currently</p>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+        <div class="col-lg-3">
+          <div class="card">
+            <div class="card-header text-success fw-bold">
+              Total Loans: N{{total_loans|intcomma}}
+            </div>
+            <div class="card-body">
+                  <!--charts-->
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Total Balance:{{total_balance|floatformat:2| intcomma}}
+            </div>
+            <div class="card-body">
+                  <!--charts-->
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Saving/Loan
+             
+            </div>
+            <div class="card-body" >
+              <canvas id="pie1"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Long term Deduction
+             
+            </div>
+            <div class="card-body" >
+              <canvas id="long_deduction_id"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Short term Deduction
+             
+            </div>
+            <div class="card-body" >
+              <canvas id="short_deduction_id"></canvas>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Short term Payoff
+             
+            </div>
+            <div class="card-body" >
+              <canvas id="short_payoff"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-header text-primary fw-bold">
+              Long term Payoff
+             
+            </div>
+            <div class="card-body" >
+              <canvas id="long_payoff"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script> -->
+<script>
+  $(document).ready(function(){
+
+    //cooperative data
+    // let saving_data=JSON.parse("{{saving_chart|escapejs}}")
+    let month_deductions= JSON.parse("{{year_deduction_l|escapejs}}")
+    month_deductions.id='saving_chart_can'
+    month_deductions.title="monthly deduction"
+    month_deductions.ctype="bar"
+    // console.log('saving chart data', month_deductions)
+    if (month_deductions.labels && month_deductions.data){
+      create_chart(month_deductions)
+    }
+
+    let short_chart= JSON.parse("{{short_chart|escapejs}}")
+    short_chart.title="short montly deduction"
+    short_chart.id="short_chart_canvas"
+    short_chart.ctype="doughnut"
+    if(short_chart.data && short_chart.labels){
+      create_chart(short_chart)
+    }
+
+    let long_chart= JSON.parse("{{long_chart|escapejs}}")
+    // console.log('long chart',long_chart)
+    long_chart.title="Long term deduction"
+    long_chart.id="long_chart_canvas"
+    long_chart.ctype="pie"
+    if(long_chart.data && long_chart.labels){
+      create_chart(long_chart)
+    }
+    //cooperative data
+
+
+    //member data data
+    let short_term_payoff = JSON.parse("{{short_offset|escapejs}}")
+    let long_term_payoff = JSON.parse("{{long_offset|escapejs}}")
+    let short = JSON.parse("{{deduction_short|escapejs}}")
+    // console.log(short)
+    let d=JSON.parse("{{deduction_data|escapejs}}")
+    let pie=JSON.parse("{{pie|escapejs}}")
+    // console.log('deduction',d)
+    // console.log(typeof d)
+    // console.log(typeof labels)
+    
+  var ctx = document.getElementById("pie1").getContext('2d');
+  var myChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+          labels: pie.labels,//[{% for item in chart_label %}"{{ item }}",{% endfor %}],//['Saving','Short term','Long term'],
+          datasets: [{
+              label: 'Saving/Loans',
+              data:pie.data ,//[{% for item in chart_data %}{{ item }},{% endfor %}],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  //'rgba(75, 192, 192, 0.2)',
+                  // 'rgba(153, 102, 255, 0.2)',
+                  // 'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  // 'rgba(75, 192, 192, 1)',
+                  // 'rgba(153, 102, 255, 1)',
+                  // 'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+
+  var ctx = document.getElementById("long_deduction_id").getContext('2d');
+  var mybar = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: d.month,
+          datasets: [{
+              label: 'long term deduction',
+              data: d.amount,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+
+  var ctx = document.getElementById("short_deduction_id").getContext('2d');
+  var mybar2 = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: short.month,
+          datasets: [{
+              label: 'short term deduction',
+              data: short.amount,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+  // short payoff
+  var ctx = document.getElementById("short_payoff").getContext('2d');
+  var short_p = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: short_term_payoff.month,
+          datasets: [{
+              label: 'short term Payoff',
+              data: short_term_payoff.amount,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+//long payoff
+var ctx = document.getElementById("long_payoff").getContext('2d');
+  var long_p = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: long_term_payoff.month,
+          datasets: [{
+              label: 'long term Payoff',
+              data: long_term_payoff.amount,
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255,99,132,1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              yAxes: [{
+                  ticks: {
+                      beginAtZero:true
+                  }
+              }]
+          }
+      }
+  });
+
+  
+//chart function
+function create_chart(obj){
+      let {ctype,id,labels,data,title}=obj
+      var ctx = document.getElementById(id).getContext('2d');
+      var myChart = new Chart(ctx, {
+          type: ctype,
+          data: {
+              labels: labels,
+              datasets: [{
+                  label: title,
+                  data:data ,
+                  backgroundColor: [
+                  'rgb(255, 99, 132)',
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 205, 86)',
+                     
+                  ],
+                  borderColor: [
+                      'rgba(255,99,132,1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  yAxes: [{
+                      ticks: {
+                          beginAtZero:true
+                      }
+                  }]
+              }
+          }
+      });
+    }
+//chart function
+
+  })
+//  var config = {
+//       type: 'pie',
+//       data: {
+//         datasets: [{
+//           data:[10] ,
+          
+//           label: 'Population'
+//         }],
+//         labels: ['saving']
+//       },
+//       options: {
+//         responsive: true
+//       }
+//     };
+
+//     window.onload = function() {
+//       var ctx = document.getElementById('pie1').getContext('2d');
+//       window.myPie = new Chart(ctx, config);
+//     };
+</script>
+{% endblock javascripts %}
+

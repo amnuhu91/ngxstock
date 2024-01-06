@@ -1,0 +1,85 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block content %}
+{% bootstrap_messages %}
+<div class="pcoded-main-container {% if request.user.is_authenticated %}{% else %}mx-0 px-0 {% endif %}" style=" background-image: url('{% static "assets/images/bgi.jpg" %}');
+background-repeat:no-repeat;
+background-size:100%;">
+  <div class="pcoded-content m-2">
+    <p class=" fw-bolder fs-3 text-center text-success ">TMCS organizational chart</p>
+    <div id="chart_div"></div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        let managers=JSON.parse("{{managers|escapejs}}")
+        // console.log('managers', managers)
+        // console.log('managers type', typeof managers)
+        let org_managers= managers.map(manager=>{
+            let supervisor= manager.rank =='President'? '':`${manager.supervisor}`
+            // console.log('Supervisor',supervisor)
+            // console.log('Supervisor type', typeof supervisor)
+            let info=[{'v':`${manager.rank}`,'f':`${manager.name} <div style="color:red; font-style:italic">${manager.rank}</div>`},supervisor,manager.rank]
+            return info
+        })
+        // console.log('org_managers',org_managers)
+        // console.log('org_managers',Array.isArray(org_managers))
+        google.charts.load('current', {packages:["orgchart"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+    
+
+    
+    
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Name');
+      data.addColumn('string', 'Manager');
+      data.addColumn('string', 'ToolTip');
+
+      // For each orgchart box, provide the name, manager, and tooltip to show.
+    //  let f= [
+    //     [{'v':'1', 'f':'Ahmad Abdallah<div style="color:red; font-style:italic">President</div>'},
+    //      '', 'The President'],
+    //     [{'v':'Jim', 'f':'Ibhrahim Isa<div style="color:red; font-style:italic">Vice President</div>'},
+    //      '1', 'VP'],
+    //     [{'v':'M1', 'f':'Muhammad Idris<div style="color:red; font-style:italic">P.R.O.</div>'},
+    //      '1', 'VP'],
+    //     [{'v':'4', 'f':'Surajudden <div style="color:red; font-style:italic">Invesment Supervisor</div>'},
+    //      '1', 'VP'],
+    //     [{'v':'3', 'f':'Isamil Ahmad<div style="color:red; font-style:italic">Chief Auditor</div>'},
+    //      '1', 'VP'],
+    //     [{'v':'5','f':'Alice Alexandra<div style="color:red; font-style:italic">Staff</div>'}, '3', ''],
+    //     ['Bob', 'Jim', 'Bob Sponge'],
+    //     ['Carol', 'Bob', ''],
+    //     [{'v':'6','f':'John Abraham<div style="color:red; font-style:italic">Staff</div>'}, '3', ''],
+    //     ['Abc', 'Carol', ''],
+    //     ['BCD', 'Carol', ''],
+    //     ['ASD', 'Carol', '']
+    //   ]
+    //   console.log(org_managers[0])
+      data.addRows(org_managers);
+
+      // Create the chart.
+      var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+      // Draw the chart, setting the allowHtml option to true for the tooltips.
+      chart.draw(data, {'allowHtml':true,allowCollapse:true,compactRows:false,size:'large',nodeClass:'org'});
+    }
+
+})
+ </script>
+{% endblock javascripts %}
+
+
+
+

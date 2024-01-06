@@ -1,0 +1,36 @@
+{% extends 'layouts/base.html' %}
+
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+
+{% block content %}
+<div class="d-flex flex-column justify-content-center  align-content-center pt-3 ">
+  
+  
+  <div class="container  " style="width:600px">
+    {% if msg  %}
+    {% bootstrap_alert msg alert_type=msg_c %}
+    {% endif  %}
+    <center><h3><small>Register</small></h3></center>
+    <form method="POST">
+      {% csrf_token %} 
+    {% comment %} {% bootstrap_form form layout='horizontal' size='sm' alert_error_type='all' %}{% endcomment %}
+     <div class="container">
+      {% bootstrap_form form %}
+     </div>
+      
+      
+    <div class="row">
+      <div class="col-lg-6">
+        {% bootstrap_button button_class='btn-success' button_type="submit" content="Register" size='sm' id='check-member' %}
+        
+      </div>
+      
+    </div>
+    </form>
+  </div>
+
+</div>
+{% endblock content %}

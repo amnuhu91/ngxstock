@@ -1,0 +1,72 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class=" container-fluid mx-0 px-0" id="root">
+  <section id="into" class="d-flex justify-content-center align-items-center" style="background-image: url('static/assets/images/1.png');background-size: cover; background-repeat: no-repeat; min-height: 100vh;">
+    <div>
+        <p class="fs-1 fw-bolder" style="color: white;">PROCUREMENT DIVISION.</p>
+        <p class="fs-5 text-center" style="color: wheat;">... Aminu Kano Teaching Hospital.</p>
+
+      </div>
+  </section>
+
+  {% comment %}<section id="About" class="mt-0"
+  style="
+  background: rgb(114,114,154);
+  background: linear-gradient(90deg, rgba(114,114,154,1) 22%, rgba(57,129,99,1) 46%, rgba(0,212,255,1) 84%);
+  "
+  >
+   {% include 'user/aboutus.html' %} 
+  </section>
+
+  
+  <section id="footer">
+    {% include 'user/footer.html' %}
+
+  </section>
+  {% endcomment %}
+</div>
+
+{% endblock content %}
+{% block javascripts %}
+<script>
+  // var chart = new OrgChart(document.getElementById("tree"), {
+  //     nodeBinding: {
+  //         field_0: "name"
+  //     },
+  //     nodes: [
+  //         { id: 1, name: "Amber McKenzie" },
+  //         { id: 2, pid: 1, name: "Ava Field" },
+  //         { id: 3, pid: 1, name: "Peter Stevens" }  
+  //     ]
+  // });
+  
+  $(document).ready(function(){
+    $('#hove').on('mouseover',function(){
+    console.log('hover')
+    $('.modal').modal({
+        show: true
+    });
+  })
+    let contact_form=$('#contact_cooperative')
+    contact_form.submit(function(e){
+      e.preventDefault()
+      let data=$(this).serializeJSON()
+      console.log('url',contact_form.attr('action'))
+      $('.spinner').show()
+      $.post('/contact/',data).then((res)=>{
+        console.log(res)
+        if(res.status==='ok'){
+          $('#suc_alert').html(res.message)
+          $('#suc_alert').show()
+          $('#contact_cooperative')[0].reset()
+          $('.spinner').hide()
+        }
+      })
+    })
+  })
+</script> 
+{% endblock javascripts %}

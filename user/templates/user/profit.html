@@ -1,0 +1,51 @@
+{% load humanize %} 
+<div class="row mt-3 bg-dark text-white">
+    <p class="text-center text-white text-decoration-underline fw-bolder fs-3">Profit</p>
+    <div class="col-lg-4 bg-white">
+        <div class="card text-dark">
+            <div class="card-header  fw-bold">
+                {% now "F/Y" %} Profit
+            </div>
+            <div class="card-body">
+              <p class="card-text">Profit:N{{prof.current_month|floatformat:2|intcomma}}</p>
+              <p class="card-text">Unit Profit:N{{prof.current_month_unit|floatformat:2|intcomma}}</p>
+            </div>
+            <div class="card-header  fw-bold">
+                {{prof.last_month}} Profit
+            </div>
+            <div class="card-body">
+                <p class="card-text">Profit:N{{prof.last_month_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Unit Profit:N{{prof.last_month_unit_p|floatformat:2|intcomma}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 bg-white">
+        <div class="card text-dark">
+            <div class="card-header text-dark fw-bold">
+              {% now "Y" %} Profit. 
+            </div>
+            <div class="card-body">
+                <p class="card-text">Profit:N{{prof.current_year_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Max Profit:N{{prof.max_year_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Average Profit:N{{prof.average_year_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Min. Profit:N{{prof.min_year_p|floatformat:2|intcomma}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 bg-white">
+        <div class="card text-dark">
+            <div class="card-header text-dark fw-bold">
+              Last year ||{{prof.last_year}} Profit. 
+            </div>
+            <div class="card-body">
+                <p class="card-text">Profit:N{{prof.last_year_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Max Profit:N{{prof.last_year_max_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Average Profit:N{{prof.last_year_avg_p|floatformat:2|intcomma}}</p>
+                <p class="card-text">Min. Profit:N{{prof.last_year_min_p|floatformat:2|intcomma}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="bg-success">
+        <p class="text-center text-white  fw-bolder fs-5 bg-success">Total profit shared:N{{prof.total_profit|floatformat:2|intcomma}}</p>
+    </div>
+</div>

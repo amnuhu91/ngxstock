@@ -1,0 +1,100 @@
+
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block content %}
+{% bootstrap_messages %}
+<div class="container" >
+  <div class="pcoded-content m-2">
+    <h1>Register</h1>
+
+    <div class="container">
+      {% if msg %}
+      {% bootstrap_alert msg alert_type=msg_c %}
+      {% endif %}
+      {% if message %}
+        
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        
+      {% endif %}
+
+    </div>
+      <form method="POST" id="user-register">
+        <div id="error"></div>
+        {% csrf_token %} 
+        {% bootstrap_form form layout='horizontal' size='sm' alert_error_type='all' %}
+      {% comment %} {% bootstrap_form form layout='horizontal' size='sm' alert_error_type='all' %}{% endcomment %}
+       <div class="container">
+        {% comment %}<div class="row">
+          <div class="col-lg-6">
+            {% bootstrap_field form.first_name autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.last_name autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.middle_name autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.department autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.unit autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.email autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.username autocomplete='off'   %}
+          </div>
+          
+          <div class="col-lg-6">
+            {% bootstrap_field form.password autocomplete='off' %}
+          </div>
+          <div class="col-lg-6">
+            {% bootstrap_field form.password2  autocomplete='off' %}
+          </div>
+          {% endcomment %}
+          <div class="col-lg-6 mt-4">
+            {% bootstrap_button button_class='btn-success' button_type="submit" content="Register" size='sm' id='subbtn' %}
+          </div>
+        </div>
+       </div>
+        
+        
+      <div class="row">
+        <div class="col-lg-6">
+          
+        </div>
+        
+      </div>
+      </form>
+    
+  </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+<script>
+  $(document).ready(function(){
+    let date=new Date()
+    $('#id_date_of_bith').datepicker(
+      {
+      changeMonth: true,
+      changeYear: true,
+      // minDate: -20, 
+      // maxDate: "+1M +10D"
+      yearRange:`1948:${date.getFullYear()-18}`
+    }
+    );
+  })
+</script>
+{% endblock javascripts %}

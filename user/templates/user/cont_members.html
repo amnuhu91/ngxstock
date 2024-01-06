@@ -1,0 +1,78 @@
+
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block content %}
+{% bootstrap_messages %}
+<div class="pcoded-main-container" >
+  <div class="pcoded-content m-2">
+    {% if label %}
+    <h1 class="text-muted" >{{label}}</h1>
+    {% else %}
+    <h1 class="text-muted" >Members</h1>
+    {% endif %}
+    
+    <div id="members-list" class="mt-3 mb-3"></div> 
+    <button id="download" class="btn btn-outline-primary">Download</button>
+  </div>
+</div>
+
+{% endblock content %}
+{% block javascripts %}
+<script>
+    
+ window.addEventListener('load',()=>{
+  function addRowCount(tableAttr) {
+
+}
+
+    // body_loader.hide(1000)
+    let data = JSON.parse("{{members|escapejs}}")
+    let label="Contributing_members_list"
+    
+    console.log(data)
+    let table = new Tabulator("#members-list", {
+                        layout:"fitColumns",
+                        pagination:"local",
+                        paginationSize:20,
+                        paginationSizeSelector:[5,10,15,30],
+                        movableColumns:true,
+                        paginationCounter:"rows",
+                        movableRows:true,
+                        rowFormatter:function(row){
+                            let row_data = row.getData()
+                            if (row_data.col <=0){
+                                row.getElement().style.backgroundColor ='red'
+                            }
+                        },
+                        columns:[
+                            
+                        {title:"S/N", formatter:"rownum"},
+                            {title:"ID", headerFilter:true, field:"member_id", sorter:"string"},
+                            {title:"Firts name", headerFilter:true, field:"first_name", sorter:"string"},
+                            {title:"Middle name", headerFilter:true, field:"midle_name", sorter:"string", headerFliter:true},
+                            {title:"Last name", field:"last_name", sorter:"string"},
+                            {title:"Email", field:"email", sorter:"string"},
+                            {title:"IPPIS", field:"ipps_no", sorter:"number",headerFilter:true},
+                            {title:"Phone", field:"phone_number", sorter:"number",headerFilter:true},
+                            ,
+                        ],
+                        data:data,
+                       
+                        
+                    });
+
+                    $("#download").on("click", function(){
+                    table.download("pdf", `${label}.pdf`, {
+                        orientation:"lanscape", //set page orientation to portrait
+                        title:`${label}`, //add title to report
+                    });
+                });
+                    
+ })
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,110 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load django_template_maths %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% load humanize %} 
+{% bootstrap_messages %}
+{% block content %}
+
+<div class="pcoded-main-container" >
+    <div class="pcoded-content m-2">
+        <p class="text-center fs-3 fw-bold text-danger">Debtors list</p>
+        <div>
+            <p class="text-start fs-4 fw-bold text-success">Short term debtors</p>
+            
+            <div id="short_debtors" class="mt-2"></div>
+        </div>
+        <div  class=" mb-3">
+            <p class="text-start fs-4 fw-bold text-info">Long term debtors</p>
+            <div id="long_debtors"></div>
+        </div>
+        <button id="download-pdf" class="btn btn-primary">Download</button>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    $(document).ready(function(){
+        let debts= JSON.parse("{{debt|escapejs}}")
+        let {long,short}= debts
+        
+
+        let {number_of_short_debtors,short_debtors}= short
+        let {number_of_long_debtors,long_debtors}= long
+        short_debtors = JSON.parse(short_debtors)
+        
+        long_debtors= JSON.parse(long_debtors)
+        // console.log('long debtors',long_debtors)
+        
+        //short debots
+        if(short_debtors.length>0){
+            display_debtors('short_debtors',short_debtors)
+        }
+        if(long_debtors.length>0){
+            display_debtors('long_debtors',long_debtors)
+        }
+
+
+        
+     
+        
+
+
+
+
+        
+
+    })
+
+    //display debtors func
+    const display_debtors=(id,data)=>{
+            let table = new Tabulator(`#${id}`, {
+                        layout:"fitColumns",
+                        renderHorizontal:"virtual",
+                        pagination:"local",
+                        paginationSize:20,
+                        paginationSizeSelector:[5,10,15,30],
+                        movableColumns:true,
+                        paginationCounter:"rows",
+                        movableRows:true,
+                        
+                        columns:[
+                            
+                            {title:"S/N", formatter:"rownum"},
+                            {title:"Name", headerFilter:false, field:"name", sorter:"string"},
+                            {title:"IPPIS", headerFilter:true, field:"ippis", sorter:"number"},
+                            {title:"Loan Batch", field:"loan_given_month", sorter:"date",
+                                formatter:"datetime", formatterParams:{
+                                    inputFormat:"yyyy-MM-dd",
+                                    outputFormat:"MM/yyyy",
+                                    invalidPlaceholder:"(invalid date)",
+                                }
+                            },
+                          
+                            {title:"Amount Collected", field:"amount_collected",
+                                    formatter:"money", formatterParams:{
+                                    decimal:".",
+                                    thousand:",",
+                                    symbol:"N",
+                                    
+                                    precision:2,
+                                },
+                                sorter:"number"
+                            },
+                        ],
+                        data:data,
+                    });
+                    // //trigger download of data.pdf file
+                $("#download-pdf").on("click", function(){
+                    table.download("pdf", "data.pdf", {
+                        orientation:"lanscape", //set page orientation to portrait
+                        title:" Report", //add title to report
+                    });
+                });
+        }
+</script>
+{% endblock javascripts %}

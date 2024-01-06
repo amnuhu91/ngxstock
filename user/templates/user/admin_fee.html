@@ -1,0 +1,33 @@
+<div class="row mt-3 bg-info">
+    <p class="text-center text-white text-decoration-underline fw-bolder fs-3">Administrative fee</p>
+    <div class="col-lg-4 bg-white">
+        <div class="card">
+            <div class="card-header text-dark fw-bold">
+              Number of members. 
+            </div>
+            <div class="card-body">
+              {{admin.members_deduction}}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 bg-white">
+        <div class="card">
+            <div class="card-header text-dark fw-bold">
+              Total admin fee for {% now "F/Y" %}. 
+            </div>
+            <div class="card-body">
+              {{admin.month_admin}}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 bg-white">
+        <div class="card">
+            <div class="card-header text-dark fw-bold">
+              Total admin fee for {% now "Y" %}. 
+            </div>
+            <div class="card-body">
+              {{admin.year_admin}}
+            </div>
+        </div>
+    </div>
+</div>

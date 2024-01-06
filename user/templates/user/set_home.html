@@ -1,0 +1,26 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% block content %}
+{% bootstrap_messages %}
+<div class="pcoded-main-container" >
+  <div class="pcoded-content m-2">
+    <p class="text-secondary fw-bolder fs-4">Welcome address</p>
+    <form method="post">
+      <ul id="error"></ul>
+      {% if msg %}
+      {% bootstrap_alert msg alert_type=msg_c %}
+      {% endif %}
+      {% csrf_token %}
+      {% bootstrap_form form layout='horizontal' %}
+      {% bootstrap_button content="Add"  class="btn btn-primary" %}
+    </form>
+  </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+
+{% endblock javascripts %}
+

@@ -1,0 +1,142 @@
+
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block content %}
+{% bootstrap_messages %}
+<div class="pcoded-main-container" >
+  <div class="pcoded-content m-2">
+    <h1>Register</h1>
+
+    <div class="container">
+      {% if msg %}
+      {% bootstrap_alert msg alert_type=msg_c %}
+      {% endif %}
+      {% if message %}
+        
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        
+      {% endif %}
+
+    </div>
+      <form method="POST" id="user-register" action="{% url 'user:add_user' %}">
+        <div id="error"></div>
+        {% csrf_token %} 
+        <div class="container">
+         {% bootstrap_form form layout='horizontal' size='sm' alert_error_type='all' %}
+         {% bootstrap_form supply_form layout='horizontal' size='sm' alert_error_type='all' id='sup_form' %}
+          <div class="col-lg-6 mt-4">
+            {% bootstrap_button button_class='btn-success' button_type="submit" content="Register" size='sm' id='subbtn' %}
+          </div>
+        </div>
+       </div>
+        
+        
+      <div class="row">
+        <div class="col-lg-6">
+          
+        </div>
+        
+      </div>
+      </form>
+    
+  </div>
+</div>
+{% endblock content %}
+{% block javascripts %}
+<script>
+  $(document).ready(function(){
+    let sup_user=$('#id_user')|| null
+    let sup_name=$('#id_supplier_name')|| null
+    let sup_address=$('#id_address')|| null
+    let sup_phone=$('#id_phone_number')|| null
+    let sup_email=$('#id_email')|| null
+    $("label[for=id_user]").hide()
+    $("label[for=id_supplier_name]").hide()
+    $("label[for=id_address]").hide()
+    $("label[for=id_phone_number]").hide()
+    $("label[for=id_email]").hide()
+    sup_user.hide()
+    sup_name.hide()
+    sup_address.hide()
+    sup_phone.hide()
+    sup_email.hide()
+
+
+    
+    let user_type=$('#id_user_type')
+    user_type.change(function(){
+      let user=$(this).val()
+      console.log('user',user)
+      if (user ==="supplier"){
+        $('#user-register .row ').slice(1,6).hide()
+        let unit=$('#user-register #id_user_unit ')
+        if (unit){
+          unit.hide()
+        }
+        // $("label[for=id_user]").show()
+        $("label[for=id_supplier_name]").show()
+        $("label[for=id_address]").show()
+        $("label[for=id_phone_number]").show()
+        $("label[for=id_email]").show()
+        $('#user-register #id_rank ').remove()
+        // sup_user.show()
+        sup_name.show()
+        sup_address.show()
+        sup_phone.show()
+        sup_email.show()
+      }
+      else if(user=="procurement"){
+        $('#user-register .row ').slice(1,6).show()
+        let unit=$('#user-register #id_user_unit ')
+        if (unit){
+          unit.show()
+        }
+        $("label[for=id_user]").hide()
+        $("label[for=id_supplier_name]").hide()
+        $("label[for=id_address]").hide()
+        $("label[for=id_phone_number]").hide()
+        $("label[for=id_email]").hide()
+        // $('#user-register .row ')[4].style.display='None'
+        sup_user.hide()
+        sup_name.hide()
+        sup_address.hide()
+        sup_phone.hide()
+        sup_email.hide()
+        console.log('procurement')
+        let rank=$(`
+        <div class="row mb-3" style=""><label class="col-sm-2 col-form-label" for="id_rank">Rank</label><div class="col-sm-10"><input type="text" name="rank" maxlength="150" class="form-control form-control-sm" placeholder="Rank" id="id_rank"></div></div>
+        `)
+        rank.insertBefore( $('#user-register .row ')[4])
+      }
+      else{
+      $('#user-register .row').slice(1,6).show()
+      let unit=$('#user-register #id_user_unit ')
+        if (unit){
+          unit.show()
+        }
+      $("label[for=id_user]").hide()
+      $("label[for=id_supplier_name]").hide()
+      $("label[for=id_address]").hide()
+      $("label[for=id_phone_number]").hide()
+      $("label[for=id_email]").hide()
+      $('#user-register .row ')[4].remove()
+      sup_user.hide()
+      sup_name.hide()
+      sup_address.hide()
+      sup_phone.hide()
+      sup_email.hide()
+      }
+    })
+  })
+</script>
+{% endblock javascripts %}

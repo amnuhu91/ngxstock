@@ -1,0 +1,56 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}
+            page title
+        {% endblock title %}
+    </title>
+    
+    {% block bootstrap %}
+        <link rel="stylesheet" href="{% static 'assets/dist/css/bootstrap.min.css' %}" >
+        <link rel="stylesheet" href="{% static 'assets/css/jquery-ui.css' %}" >
+        <link rel="stylesheet" href="{% static 'assets/css/selectize.default.min.css' %}" >
+        <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" >
+        <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" >
+    {% endblock bootstrap %}
+    
+    {% block custom_css %}
+        
+    {% endblock custom_css %}
+        
+        
+</head>
+
+{% block navbar %}
+{% include 'navbar/homenav.html' %}
+{% endblock navbar %}
+    
+<body>
+  
+  {% block javascript %}
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery-ui.js' %}"></script>
+    <script src="{% static 'assets/js/selectize.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.serializejson.js' %}"></script>
+    <script src="{% static 'assets/dist/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/htmx.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+  {% endblock javascript %}
+  
+  {% block custom_js %}
+    
+  {% endblock custom_js %}
+    
+  {% block content  %}
+    home content here
+{% endblock content  %}  
+      
+</body>
+</html>
