@@ -40,14 +40,26 @@ def make_prediction(request):
         # data.loc[len(data)]= row_df#['11/30/2023',None,None,None,None,None,None]
         data[date_column] = pd.to_datetime(data[date_column])
         search= pd.to_datetime(date)
-        data['date_dif']=abs(data['Date']-search)
-        closest=data.iloc[data['date_dif'].idxmin()]
-        print('CLOSEST',closest)
-        index=data[data['Date']==closest.Date].index[0]
-        print('INDEX',index)
-        location=index+1
-        print('LOCATION',location)
-        data=pd.concat([data.loc[:location-1],pd.DataFrame([new_row]),data.loc[location:]]).reset_index(drop=True)
+        if search < pd.to_datetime('11/30/2023',format='%m/%d/%Y'):
+            print('DATE LESS THAN',search < pd.to_datetime('11/30/2023',format='%m/%d/%Y'))
+            print('len of data',len(data))
+            data['date_dif']=abs(data['Date']-search)
+            closest=data.iloc[data['date_dif'].idxmin()]
+            print('CLOSEST',closest)
+            index=data[data['Date']==closest.Date].index[0]
+            print('INDEX',index)
+            location=index+1
+            print('LOCATION',location)
+            data=pd.concat([data.loc[:location-1],pd.DataFrame([new_row]),data.loc[location:]]).reset_index(drop=True)
+            print('len of data',len(data))
+        if search > pd.to_datetime('11/30/2023',format='%m/%d/%Y'):
+            print('DATE GREATER THAN',search > pd.to_datetime('11/30/2023',format='%m/%d/%Y'))
+            
+            data=data[data['Date'] > pd.to_datetime('01/15/2023',format='%m/%d/%Y')]
+            data= shuffle(data)
+            data.loc[len(data)]= new_row#['11/30/2023',None,None,None,None,None,None]
+            print('len of data',len(data))
+            location=-1
         data.set_index(date_column, inplace=True)
         prices = data[price_column].values.reshape(-1, 1)
         scaler = MinMaxScaler(feature_range=(0, 1))
@@ -62,7 +74,9 @@ def make_prediction(request):
         context={
 
         }
-        p='%.3f' % lstm_predicted_price
+        # p='%.3f' % lstm_predicted_price
+        p='{:,.2f}'.format(lstm_predicted_price)
+
         context['message']=f'Predicted Closing Price is:N{p}.'
         context['class']='success'
         return render(request,'partials/alert.html',context)
