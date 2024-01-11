@@ -72,5 +72,5 @@ whitenoise==6.5.0
 xhtml2pdf==0.2.11
 xlrd==2.0.1
 xlwt==1.3.0
-tensorflowt
+tensorflow
 scikit-learn
